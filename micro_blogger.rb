@@ -88,7 +88,8 @@ class MicroBlogger
 
   def print_haiku
     texts = ["The Catcher in the Rye",
-             "Fahrenheit 451", "To Kill a Mockingbird"]
+             "Fahrenheit 451", "To Kill a Mockingbird",
+             "O Pioneers!"]
     chosen_text = texts[rand(0...texts.size)]
     file = File.open("#{chosen_text}.txt")
     contents = file.read.gsub!("\n", ' ')
