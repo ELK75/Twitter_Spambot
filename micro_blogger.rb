@@ -56,6 +56,34 @@ class MicroBlogger
     end
   end
 
+  def clean_up_definition(definition)
+  	# gets rid of the denotion of whether or
+  	# not it's a noun/verb/adj/etc...
+  	definition.sub!(/[a-z]+\.\s/, '')
+  end
+
+  def tweet_word_and_definition(dictionary)
+  	while true
+  		phrases = %w(Wow! Cool! Neat! Rad! Groovy!)
+  		random_word = dictionary.keys.sample
+  		random_defintion = clean_up_definition(dictionary[random_word])
+  		random_phrase = phrases.sample
+  		word_of_day_tweet = "#{random_word} means #{random_defintion}\n#{random_phrase}"
+  		tweet(word_of_day_tweet)
+  		sleep(3600)
+  	end
+  end
+
+  def print_word_of_the_day
+    dictionary = Hash.new('')
+  	File.open("dictionary.txt").readlines.each do |line|
+  		word_and_def = line.split('  ')
+  		next if word_and_def.length != 2
+  		dictionary[word_and_def[0]] = word_and_def[1]
+  	end
+  	tweet_word_and_definition(dictionary)
+  end
+
   def shorten(original_url)
   	puts "Shortening this URL: #{original_url}"
   	Bitly.use_api_version_3
@@ -64,7 +92,7 @@ class MicroBlogger
   end
 
 	def clean_message(message)
-		message[0..139]
+		message[0..139] unless message.nil?
 	end
 
 	def run
@@ -84,6 +112,7 @@ class MicroBlogger
 				when 's' then shorten(parts[1])
 				when 'turl' then tweet(parts[1..-2].join(" ") + 
 					" " + shorten(parts[-1]))
+				when 'wod' then print_word_of_the_day
 				else
 					puts "Sorry, I don't know how to #{command}"
 			end
